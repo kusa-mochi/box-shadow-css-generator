@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        #app .shadow-image .image-container {
+            border: 1px gray solid;
+        }
+
+        #app .shadow-image .image-container .shadow-object {
+            width: 100px;
+            height: 100px;
+            margin: 100px auto;
+        }
+
+        #app .sample-code textarea {
+            width: 100%;
+            height: 30px;
+            background-color: #ddffdd;
+            font-size: 20px;
+        }
+
+        .entry-content td {
+            padding: 0;
+            vertical-align: middle;
+        }
+
+        td input {
+            margin: 0;
+            vertical-align: middle;
+        }
+
+        tr {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <table class="shadow-settings">
+            <tbody>
+                <tr class="horizontal-offset-setting">
+                    <td>水平方向のオフセット[px]</td>
+                    <td>
+                        <input type="number" name="horizontal-offset" min="-1000" max="1000"
+                            v-model="horizontalOffset" />
+                    </td>
+                </tr>
+                <tr class="vertical-offset-setting">
+                    <td>垂直方向のオフセット[px]</td>
+                    <td>
+                        <input type="number" name="vertical-offset" min="-1000" max="1000" v-model="verticalOffset" />
+                    </td>
+                </tr>
+                <tr class="blur-setting">
+                    <td>ぼかしの距離[px] (0～)</td>
+                    <td>
+                        <input type="number" name="blur" min="0" max="1000" v-model="blur" />
+                    </td>
+                </tr>
+                <tr class="spreading-setting">
+                    <td>影の拡がり[px]</td>
+                    <td>
+                        <input type="number" name="spreading" min="-1000" max="1000" v-model="spreading" />
+                    </td>
+                </tr>
+                <tr class="shadow-color-setting">
+                    <td>影の色</td>
+                    <td>
+                        <input type="color" name="shadow-color" v-model="shadowColor" />
+                    </td>
+                </tr>
+                <tr class="shadow-opacity-setting">
+                    <td>影の不透明度</td>
+                    <td>
+                        <input type="range" name="shadow-opacity" min="0" max="1" step="0.01" v-model="shadowOpacity" />
+                        <input type="number" name="shadow-opacity-number" min="0" max="1" v-model="shadowOpacity" />
+                    </td>
+                </tr>
+                <tr class="element-color-setting">
+                    <td>要素の色</td>
+                    <td>
+                        <input type="color" name="element-color" v-model="elementColor" />
+                    </td>
+                </tr>
+                <tr class="background-color-setting">
+                    <td>背景色</td>
+                    <td>
+                        <input type="color" name="background-color" v-model="backgroundColor" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="shadow-image">
+            <div class="image-container" v-bind:style="BackgroundStyle">
+                <div class="shadow-object" v-bind:style="ElementStyle"></div>
+            </div>
+        </div>
+        <div class="sample-code">
+            <textarea v-model="TextAreaStr" readonly></textarea>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</body>
+
+<script>
+    // Vue.jsの機能の初期化
+    var app = new Vue({
+        el: '#app',     // 初期化の対象とする要素。この要素以下でVue.jsの諸機能を使える。
+        data: {         // リアクティブなデータをまとめるプロパティ。
+            horizontalOffset: 15,
+            verticalOffset: 10,
+            blur: 2,
+            spreading: -3,
+            shadowColor: "#000000",
+            shadowOpacity: 0.4,
+            elementColor: "#cccccc",
+            backgroundColor: "#ffffff"
+        },
+        computed: {
+            ElementStyle() {
+                var output = "";
+                output += this.horizontalOffset + "px ";
+                output += this.verticalOffset + "px ";
+                output += this.blur + "px ";
+                output += this.spreading + "px ";
+                output += this.HexColor2RGBA(this.shadowColor, this.shadowOpacity);
+                return {
+                    boxShadow: output,
+                    backgroundColor: this.elementColor
+                };
+            },
+            BackgroundStyle() {
+                return {
+                    backgroundColor: this.backgroundColor
+                };
+            },
+            TextAreaStr() {
+                return "box-shadow: " + this.ElementStyle.boxShadow + ";";
+            }
+        },
+        methods: {
+            HexColor2RGBA(hexColor, opacity) {
+                const hexColorCode = hexColor.substring(1, hexColor.length);
+                const hexValue = hexColorCode.substring().split("");
+                let r, g, b;
+                if (hexColorCode.length === 3) {
+                    r = parseInt(hexValue[0].toString() + hexValue[0].toString(), 16);
+                    g = parseInt(hexValue[1].toString() + hexValue[1].toString(), 16);
+                    b = parseInt(hexValue[2].toString() + hexValue[2].toString(), 16);
+                } else if (hexColorCode.length === 6) {
+                    r = parseInt(hexValue[0].toString() + hexValue[1].toString(), 16);
+                    g = parseInt(hexValue[2].toString() + hexValue[3].toString(), 16);
+                    b = parseInt(hexValue[4].toString() + hexValue[5].toString(), 16);
+                }
+                return "rgba(" + r + "," + g + "," + b + "," + opacity + ")";
+            }
+        }
+    });
+</script>
+
+</html>
